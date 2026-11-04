@@ -1,0 +1,9 @@
+node_modules/
+.next/
+*.tsbuildinfo
+.env*
+!env.local.example
+.agora/
+*.app/
+*.log
+.DS_Store

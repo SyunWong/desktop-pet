@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light theme (default). Dark tokens apply when the OS prefers dark mode. */
+:root {
+  color-scheme: light;
+
+  /* --- Agora light token set --- */
+
+  /* Backgrounds */
+  --background:       220 20% 98%;
+  --surface:          220 18% 96%;
+  --surface-elevated: 220 16% 94%;
+
+  /* Semantic surface aliases */
+  --card:             0 0% 100%;
+  --card-foreground:  220 25% 12%;
+  --popover:          0 0% 100%;
+  --popover-foreground: 220 25% 12%;
+  --muted:            220 14% 94%;
+
+  /* Borders / inputs */
+  --border:           220 13% 88%;
+  --input:            220 13% 88%;
+
+  /* Foreground */
+  --foreground:       220 25% 12%;
+  --muted-foreground: 220 10% 42%;
+
+  /* Brand — Agora cyan */
+  --primary:            194 100% 42%;
+  --primary-foreground: 220 25% 12%;
+
+  /* Secondary — quiet surface-level control */
+  --secondary:            220 14% 94%;
+  --secondary-foreground: 220 25% 12%;
+
+  /* Accent — same hue as primary */
+  --accent:            194 100% 42%;
+  --accent-foreground: 220 25% 12%;
+
+  /* Destructive — end call, error states only */
+  --destructive:            0 72% 52%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Focus ring */
+  --ring: 194 100% 42%;
+
+  /* Radius base (8px) */
+  --radius: 0.5rem;
+
+  /* Charts */
+  --chart-1: 194 100% 42%;
+  --chart-2: 220 10% 45%;
+  --chart-3: 220 10% 35%;
+  --chart-4: 0 72% 52%;
+  --chart-5: 150 50% 40%;
+
+  /* Sidebar */
+  --sidebar-background:         0 0% 100%;
+  --sidebar-foreground:         220 25% 12%;
+  --sidebar-primary:            194 100% 42%;
+  --sidebar-primary-foreground: 220 25% 12%;
+  --sidebar-accent:             220 14% 94%;
+  --sidebar-accent-foreground:  220 25% 12%;
+  --sidebar-border:             220 13% 88%;
+  --sidebar-ring:               194 100% 42%;
+
+  /*
+   * AgentVisualizer: same order as dark — cool/primary at bar bottom, soft mid, purple at top.
+   * Light: blue ≈ cyan role; dark: overridden below (cyan → soft → purple).
+   */
+  --viz-stop-1: 225 92% 50%;
+  --viz-stop-2: 220 14% 78%;
+  --viz-stop-3: 285 58% 48%;
+
+  /* Font */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    /* --- Agora dark token set --- */
+
+    --background:       220 14% 5%;
+    --surface:          220 12% 9%;
+    --surface-elevated: 220 10% 13%;
+
+    --card:             220 12% 9%;
+    --card-foreground:  220 15% 95%;
+    --popover:          220 10% 13%;
+    --popover-foreground: 220 15% 95%;
+    --muted:            220 12% 9%;
+
+    --border:           220 10% 18%;
+    --input:            220 10% 18%;
+
+    --foreground:       220 15% 95%;
+    --muted-foreground: 220 10% 50%;
+
+    --primary:            194 100% 50%;
+    --primary-foreground: 220 14% 5%;
+
+    --secondary:            220 10% 13%;
+    --secondary-foreground: 220 15% 95%;
+
+    --accent:            194 100% 50%;
+    --accent-foreground: 220 14% 5%;
+
+    --destructive:            0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --ring: 194 100% 50%;
+
+    --chart-1: 194 100% 50%;
+    --chart-2: 220 10% 60%;
+    --chart-3: 220 10% 40%;
+    --chart-4: 0 72% 58%;
+    --chart-5: 150 60% 45%;
+
+    --sidebar-background:         220 12% 9%;
+    --sidebar-foreground:         220 15% 95%;
+    --sidebar-primary:            194 100% 50%;
+    --sidebar-primary-foreground: 220 14% 5%;
+    --sidebar-accent:             220 10% 13%;
+    --sidebar-accent-foreground:  220 15% 95%;
+    --sidebar-border:             220 10% 18%;
+    --sidebar-ring:               194 100% 50%;
+
+    /* Agent visualizer accent ramp used by the current conversation UI. */
+    --viz-stop-1: 194 100% 58%;
+    --viz-stop-2: 215 42% 72%;
+    --viz-stop-3: 272 62% 72%;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+
+/* --- Entry animations --- */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-up-d1 { animation-delay: 60ms; }
+.animate-fade-up-d2 { animation-delay: 120ms; }
+.animate-fade-up-d3 { animation-delay: 180ms; }
+
+/* --- MicButtonWithVisualizer: force a true circle ---
+   The parent flex can stretch the <button> unevenly. */
+.conversation-mic-host {
+  flex-shrink: 0;
+}
+.conversation-mic-host > button {
+  aspect-ratio: 1 / 1;
+  width: 3rem;
+  height: 3rem;
+  min-width: 3rem;
+  min-height: 3rem;
+  max-width: 3rem;
+  max-height: 3rem;
+  border-radius: 9999px;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: visible; /* Web Audio bar visualizer in bottom band; avoid clipping */
+}
+@media (min-width: 640px) {
+  .conversation-mic-host > button {
+    width: 3.5rem;
+    height: 3.5rem;
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+    max-width: 3.5rem;
+    max-height: 3.5rem;
+  }
+}
+html,body { background: transparent !important; margin:0; overflow:hidden; }
+.pet { height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:end; padding-bottom:6px; gap:5px; font: 13px -apple-system,sans-serif; color:white; }
+.pet { user-select:none; -webkit-user-select:none; }
+.pet .character { width:124px; height:166px; position:relative; pointer-events:none; }
+.pet .character img { display:block; width:100%; height:100%; }
+.badge,.pet button,small[role=alert] {border-radius:15px;background:#192f48ed;color:white;padding:4px 10px;text-align:center;}
+.pet nav {display:flex;gap:5px}.pet button {cursor:pointer;background:#235479;}.pet button:disabled {opacity:.6;}
+
+.pet .mouth { position:absolute; left:45%; top:52%; width:3.2%; height:1.5%; border-radius:50%; background:#a55b63;animation:chat-mouth .24s ease-in-out infinite alternate; }
+@keyframes chat-mouth {from {transform:scaleY(.12)} to {transform:scaleY(1.3)}}
+.pet .character {height:150px;width:112px;flex:none;}
+.pet .toy {position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.pet .chopsticks {animation:pick-rice var(--bite-time) ease-in-out var(--bites);}
+.pet .bite {animation:eat-grain var(--bite-time) linear var(--bites);}
+@keyframes pick-rice {0%,100% {transform:translateY(7px)} 48%,62% {transform:translate(-3px,-15px)}}
+@keyframes eat-grain {0%,48%,100% {opacity:1} 54%,92% {opacity:0}}
+.pet .foxtail {transform-origin:131px 179px;animation:tickle 2.3s ease-in-out 3;}
+@keyframes tickle {0%,100% {transform:rotate(12deg)} 28% {transform:rotate(-13deg)} 54% {transform:rotate(-32deg) scale(1.35,.98)} 75% {transform:rotate(4deg) scale(1.15,1)}}
+
+.pet nav[aria-label="Playtime"] {gap:3px;}
+.pet nav[aria-label="Playtime"] button {padding:4px 5px;font-size:12px;white-space:nowrap;}
+.character[data-play=turbo] .mouth {animation:gulp var(--bite-time) ease-in-out var(--bites);}
+@keyframes gulp {0%,75%,100% {transform:scaleY(.15)} 48%,60% {transform:scaleY(1.6)}}
+.character[data-play=turbo] {--arm-cycle:calc(var(--bite-time) * 2);}
+.character[data-play=turbo] .chopsticks,.character[data-play=turbo] .bite {animation-duration:var(--arm-cycle);}
+.other-hand .chopsticks,.other-hand .bite {animation-delay:calc(0ms - var(--bite-time));}
+.character[data-play=turbo] img {clip-path:polygon(0 0,100% 0,100% 100%,64% 100%,64% 93%,29% 93%,29% 100%,0 100%);}
+.pet .kick {position:absolute;inset:0;background:url('/whale.png') center / 100% 100% no-repeat;animation:happy-kick .23s ease-in-out infinite alternate;}
+.foot-left {clip-path:inset(93% 52% 0 29%);transform-origin:40% 93%;}
+.pet .foot-right {clip-path:inset(93% 36% 0 48%);transform-origin:54% 93%;animation-direction:alternate-reverse;}
+@keyframes happy-kick {from {transform:rotate(-32deg) translateY(-1px)} to {transform:rotate(32deg) translateY(1px)}}
+.pet .character {isolation:isolate;}
+
+.grass-stage { position:relative; width:100%; height:150px; flex:none; display:grid; place-items:center; overflow:hidden; touch-action:none; cursor:grab; }
+.grass-stage:active { cursor:grabbing; }
+.grass-pet { transform-origin:50% 88%; }
+.grass-stage[data-phase=tracking] .grass-pet { transform:rotate(var(--lean)); transition:transform .12s ease-out; }
+.grass-stage[data-phase=pouncing] .grass-pet { animation:grass-hop .38s ease-in forwards; }
+@keyframes grass-hop { 0% { transform:rotate(var(--lean)); } 45% { transform:scale(1.05,.91); } 100% { transform:translate(var(--hop-x),var(--hop-y)) rotate(var(--lean)); } }
+.grass-stage[data-phase=missed] .grass-pet,.grass-stage[data-phase=caught] .grass-pet { animation:grass-land .32s ease-out; }
+@keyframes grass-land { from { transform:translate(var(--hop-x),var(--hop-y)) rotate(var(--lean)); } to { transform:none; } }
+.grass-lure { position:absolute; width:112px; height:150px; transform:translate(-76%,-24%); pointer-events:none; }
+.grass-lure .foxtail { animation:none; }
