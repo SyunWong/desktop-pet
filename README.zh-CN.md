@@ -18,31 +18,59 @@
 
 ## 安装运行
 
-需要 macOS、Apple Command Line Tools、Python 3、Node.js 22+ 和 pnpm 10。目前在 Apple Silicon Mac 上验证过，Intel Mac 尚未验证。
+桌面悬浮窗口面向 macOS，目前在 Apple Silicon 上验证过。Intel 和其他 macOS 版本还需要验证；其他系统可以先尝试浏览器预览。
+
+### 1. 准备工具
+
+安装 Node.js 22+、Python 3 和 Apple Command Line Tools，然后在终端检查。
 
 ```bash
-xcode-select --install
+node --version
+python3 --version
+xcrun --find swiftc
+```
+
+如果缺少 Command Line Tools，运行 `xcode-select --install`，等待安装完成后继续。缺少 Node.js 或 Python 时先安装，再重新打开终端。接着安装 pnpm。
+
+```bash
 npm install -g pnpm@10.11.0
+```
+
+### 2. 克隆并启动
+
+在你想保存项目的目录运行。
+
+```bash
 git clone https://github.com/SyunWong/desktop-pet.git
 cd desktop-pet
 ./scripts/setup.sh
 ./scripts/run-macos.sh
 ```
 
-已经安装 Command Line Tools 可以跳过第一步。吃饭和玩草无需密钥。程序会在项目旁生成 `Desktop Pet.app`，并启动本地 Next.js 开发服务器。请保持 app 与 `voice/` 在同一个目录，Node 路径变化后重新运行构建脚本。
+Setup 安装锁定版本的依赖，并在缺少配置文件时创建 `voice/.env.local`。启动脚本会编译并打开 `Desktop Pet.app`。你应该看到悬浮角色、互动按钮和 **Start Chat**。先尝试喂饭、炫饭、狗尾巴草的抓住和扑空，这些无需 API 密钥。拖动标题移动窗口，点 × 退出。
+
+程序会启动本地 Next.js 开发服务器。请保持 app 与 `voice/` 在同一个目录；再次运行启动脚本前先关闭旧窗口。Node 路径变化后重新构建。运行 app 需要保留源码目录和已安装的 Node 依赖。
 
 ## 语音配置
 
 下面的 STT、LLM 和 TTS 是作者录制 demo 时的个人选择。开发者可以选择自己的 Agora 集成支持的其他服务商，并按需求调整识别语言、模型和音色。
 
-如果要复现当前 demo，在 setup 生成的 `voice/.env.local` 填写自己的配置。
+如果要复现当前 demo，用编辑器打开 setup 生成的 `voice/.env.local`，按每行 `NAME=value` 填写自己的配置并保存在本地。Agora App ID 和对应 App Certificate 在 Agora Console 的项目中获取；DeepSeek 和 Fish Audio 的可选密钥分别来自你自己的服务商账号。
 
 - `NEXT_PUBLIC_AGORA_APP_ID` 和 `NEXT_AGORA_APP_CERTIFICATE` 来自同一个 Agora 项目，项目需开通 Conversational AI。
 - `DEEPSEEK_API_KEY` 用于 DeepSeek。
 - `FISH_AUDIO_API_KEY` 用于 Fish Audio。填好两个可选 key 可复现英文语音版本。
 - 不填可选 key 时，代码回退到 Agora 托管的 OpenAI / MiniMax，使用中文开场白。
 
-点 **Start Chat** 并允许麦克风访问。结束时点 **End Call**。语音调用需要网络，服务商可能收费。
+保存配置后，从仓库根目录运行本地配置检查。
+
+```bash
+cd voice
+pnpm doctor
+cd ..
+```
+
+Doctor 检查本地环境和两项 Agora 变量是否已填写。密钥有效性和服务商访问权限需要通过实际通话确认。修改 `.env.local` 后关闭并重新打开桌宠，点 **Start Chat**，允许麦克风访问。应该能听到开场白，并在说话后收到回应。试一下静音、取消静音、挂断，再发起一次通话，确认能重新连接。语音调用需要网络，服务商可能收费。
 
 ### Demo 配置与替换位置
 
@@ -58,7 +86,61 @@ cd desktop-pet
 
 ## 浏览器预览
 
-在 `voice/` 运行 `pnpm dev --hostname 127.0.0.1`，访问 http://127.0.0.1:3000。
+先运行 setup，再从仓库根目录运行以下命令。浏览器预览需要 Node.js 和 pnpm，Swift 构建用于 macOS 桌面窗口。
+
+```bash
+cd voice
+pnpm dev --hostname 127.0.0.1
+```
+
+访问 http://127.0.0.1:3000。
+
+## 让你的 AI 帮你复刻
+
+让编程助手访问这个仓库，复制下面这段任务给它。
+
+```text
+请在我的电脑上安装并运行 Desktop Pet 仓库。
+先读 README.zh-CN.md、scripts/setup.sh 和 scripts/run-macos.sh。
+检查系统和依赖。macOS 按桌面安装步骤运行；其他系统先用浏览器预览，
+并说明实际验证的平台和范围。使用项目现有 setup 脚本，密钥保存在
+voice/.env.local 中。先验证喂饭、炫饭和玩草；能操作浏览器时，
+检查狗尾巴草的抓住和扑空两种结果。
+语音部分按我选择的 STT、LLM、TTS 配置。换服务商前阅读语音配置说明
+及 invite-agent 路由。缺少密钥时让我在本地填写，服务商不可用时如实说明。
+改代码后运行文档中的检查。最后列出已验证的启动、互动、真实通话结果，
+以及还需要我手动确认的部分。
+```
+
+## 开发验证与排障
+
+从仓库根目录运行以下检查，使用空白配置模板也可以执行。
+
+```bash
+cd voice
+pnpm typecheck
+pnpm verify:api
+pnpm build
+```
+
+修改 `Whale.swift` 后，在仓库根目录运行 `./scripts/build-macos.sh`，关闭并重新打开 app。前端开发支持热更新。文件职责和服务商配置入口见 [Recipe](docs/RECIPE.md)。替换角色图片后，还需要调整嘴、袖子、脚部遮罩等动画坐标。
+
+- 启动失败时查看 `desktop.log`，确认 setup 已完成，Node 路径改变后重新构建。
+- 麦克风无声时检查 macOS 隐私设置，再重新发起通话。
+- 听不到声音时检查系统输出设备和音量，出现 **Enable Sound** 时点它。
+- 聊天连接失败时检查两项 Agora 配置、Conversational AI 开通状态和服务商权限。
+
+语音会传给 Agora 及配置的服务商，密钥保存在本地服务端环境中。示例 API 没有用户认证，请保持本地回环访问；对外部署需要补上鉴权和限流。
+
+## 后续计划
+
+以下是未来版本的探索方向，具体范围和时间还在规划中。
+
+- **更多表情和反馈**：闭眼、开心、困倦、惊讶，以及更丰富的互动反应。
+- **更多角色**：增加新角色，让形象、性格和音色更容易切换。
+- **通过聊天交办任务**：直接告诉桌宠你想做什么，接入工具后，在同一段对话里听到进展和结果。例如总结文档、整理笔记，需要确认的操作由用户确认后执行。
+
+欢迎通过 GitHub issue 和 PR 提想法或贡献，参见 [贡献说明](CONTRIBUTING.md)。
 
 ## 复刻和贡献
 

@@ -20,26 +20,44 @@ Click **Start Chat** to talk with her. The demo connects DeepSeek and Fish Audio
 
 ## Requirements and quick start
 
-The floating desktop app requires macOS, Apple Command Line Tools, Python 3, Node.js 22+, and pnpm 10. The Swift app is built locally for your Mac. Apple Silicon has been tested; Intel and other macOS versions need validation. A browser preview is also available.
+The floating desktop app targets macOS. The current version has been tested on Apple Silicon; Intel and other macOS versions need validation. For other platforms, start with the browser preview.
+
+### 1. Prepare your tools
+
+Install Node.js 22+, Python 3, and Apple Command Line Tools. Check your terminal before proceeding.
 
 ```bash
-xcode-select --install
+node --version
+python3 --version
+xcrun --find swiftc
+```
+
+If Command Line Tools are missing, run `xcode-select --install` and wait for the installer to finish. If Node.js or Python is missing, install it and reopen your terminal. Then install pnpm.
+
+```bash
 npm install -g pnpm@10.11.0
+```
+
+### 2. Clone and launch
+
+Run these commands in the directory where you want to keep the project.
+
+```bash
 git clone https://github.com/SyunWong/desktop-pet.git
 cd desktop-pet
 ./scripts/setup.sh
 ./scripts/run-macos.sh
 ```
 
-If Command Line Tools are already installed, skip the first command. Pet interactions work without API credentials.
+Setup installs the locked dependencies and creates `voice/.env.local` if it is missing. The run script builds and opens `Desktop Pet.app`. Expect a small floating character with interaction buttons and **Start Chat**. Try Feed Rice, Rice Frenzy, and a foxtail catch/miss first; these work without API keys. Drag the title to move her and click × to quit.
 
-The app starts a local Next.js development server on a random loopback port. Keep the generated app beside the `voice/` directory. Run the build script again after changing your Node installation. This is a source-based developer demo; the app bundle depends on the project directory and installed Node packages.
+The app starts a local Next.js development server on a random loopback port. Keep the generated app beside `voice/`. Close the existing window before running the launch script again. Rebuild after changing your Node installation. The app bundle needs this source directory and the installed Node packages to run.
 
 ## Voice setup
 
 The author chose the providers below for this demo. Developers can choose other STT, LLM, and TTS providers supported by their Agora integration, along with their preferred languages, models, and voices.
 
-To reproduce the included configuration, edit `voice/.env.local`, created by setup.
+To reproduce the included configuration, open `voice/.env.local` in your editor after running setup. Enter one `NAME=value` per line and keep the file local. Obtain the Agora App ID and matching App Certificate from your project in the Agora Console. Enable Conversational AI for that project. Obtain optional provider keys from your own DeepSeek and Fish Audio accounts.
 
 | Variable | Purpose |
 | --- | --- |
@@ -48,7 +66,7 @@ To reproduce the included configuration, edit `voice/.env.local`, created by set
 | `DEEPSEEK_API_KEY` | Optional, selects the demo's DeepSeek LLM |
 | `FISH_AUDIO_API_KEY` | Optional, selects Fish Audio and the English greeting/persona |
 
-Enable Conversational AI in your Agora project and ensure the configured providers are available to your account. Calls can incur provider charges. Set both optional keys to reproduce the English voice demo. With neither optional key, the code uses Agora-managed OpenAI and MiniMax with a Chinese greeting.
+Ensure the configured providers are available to your account. Calls can incur provider charges. Set both optional keys to reproduce the English voice demo. With neither optional key, the code uses Agora-managed OpenAI and MiniMax with a Chinese greeting.
 
 ### Demo choices and customization
 
@@ -62,9 +80,19 @@ Configure these stages in `voice/app/api/invite-agent/route.ts`, using the `.wit
 
 The included code also ties the English greeting/persona to the presence of a Fish Audio key. When choosing another voice provider or language, update the prompt and greeting in the same file to match.
 
-Start Chat, grant microphone access, speak, then use **End Call** to finish. The macOS shell forwards audio to AVAudioEngine for native playback, including headphones. Browser previews use HTML audio playback.
+After saving your configuration, run the credential-presence check from the repository root.
+
+```bash
+cd voice
+pnpm doctor
+cd ..
+```
+
+Doctor checks the local setup and that the two Agora variables have values. A successful call verifies credentials and provider access. Close and reopen the desktop app after changing `.env.local`, then click **Start Chat**, allow microphone access, and speak. Expect an audible greeting and a response to your voice. Try **Mute**, **Unmute**, and **End Call**, then start a second call to verify reconnection. The macOS shell forwards audio to AVAudioEngine for native playback, including headphones. Browser previews use HTML audio playback.
 
 ## Browser preview
+
+Run setup first, then run the following from the repository root. Browser preview uses Node.js and pnpm; the Swift build is specific to the macOS desktop window.
 
 ```bash
 cd voice
@@ -82,6 +110,8 @@ Open http://127.0.0.1:3000. The native floating window and native audio bridge a
 - `voice/components/ConversationComponent.tsx` — RTC/RTM lifecycle and audio playback.
 - `scripts/` — setup and local app build.
 
+Run these checks from the repository root. They can run with the blank configuration template.
+
 ```bash
 cd voice
 pnpm typecheck
@@ -89,7 +119,28 @@ pnpm verify:api
 pnpm build
 ```
 
-See `docs/VALIDATION.md` for checks and limitations of this source release.
+For changes to `Whale.swift`, run `./scripts/build-macos.sh` from the repository root. The front end uses development hot reload; closing and reopening the app loads a newly built native executable. See [validation results](docs/VALIDATION.md) for checks and limitations of this source release.
+
+## Reproduce with your coding assistant
+
+Give your AI access to this repository and paste the following task.
+
+```text
+Set up and run this Desktop Pet repository on my machine.
+Read README.md, scripts/setup.sh, and scripts/run-macos.sh first.
+Check my OS and prerequisites. On macOS, follow the desktop quick start;
+on another OS, use the browser preview and report that verification scope.
+Run the existing setup script and keep credentials in voice/.env.local.
+Start with local rice and foxtail interactions. Confirm the UI loads and
+check both catching and missing the grass if browser controls are available.
+For voice chat, use my chosen STT/LLM/TTS configuration. Consult the Voice
+setup section and invite-agent route before changing providers. Ask me to
+enter missing keys locally, and report any unavailable provider access.
+After code changes, run the documented checks. Report which startup, UI,
+and real-call checks passed and which still need manual verification.
+```
+
+For provider changes, look up the selected provider in the installed SDK and its current integration documentation. The customization map and original quickstart provenance are in [the recipe](docs/RECIPE.md).
 
 ## Troubleshooting
 
@@ -103,6 +154,16 @@ See `docs/VALIDATION.md` for checks and limitations of this source release.
 ## Data and deployment
 
 Voice chat sends microphone audio to Agora and its configured speech/LLM providers. Keys stay in the local server environment. Local animation needs no cloud connection. The sample API routes have no user authentication, so keep the server on loopback; a hosted multi-user version needs authentication and rate limits.
+
+## Roadmap
+
+Planned directions for future versions, with scope and timing still open.
+
+- **More expressions and reactions** — closed eyes, happy, sleepy, surprised, and richer responses to interaction.
+- **More characters** — additional pets and a simpler way to switch character artwork, personalities, and voices.
+- **Tasks through conversation** — tell your companion what you want to get done, connect it to tools, and hear progress and results in the same conversation. For example, ask it to summarize a document or organize a set of notes, with confirmation for actions that need it.
+
+Ideas and contributions are welcome through GitHub issues and pull requests. See [Contributing](CONTRIBUTING.md).
 
 ## License and attribution
 
