@@ -1,5 +1,5 @@
 {
-  "name": "deepseek-chan-desktop",
+  "name": "desktop-pet",
   "version": "0.1.0",
   "description": "A macOS desktop pet with rice animations, a draggable foxtail and real-time voice chat.",
   "private": true,

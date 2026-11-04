@@ -1,4 +1,4 @@
-# DeepSeek-chan Desktop 🐋
+# Desktop Pet 🐋
 
 A tiny floating macOS companion who loves rice, chases a foxtail, and talks with you.
 
@@ -20,8 +20,8 @@ The floating desktop app requires macOS, Apple Command Line Tools, Python 3, Nod
 ```bash
 xcode-select --install
 npm install -g pnpm@10.11.0
-git clone https://github.com/SyunWong/deepseek-chan-desktop.git
-cd deepseek-chan-desktop
+git clone https://github.com/SyunWong/desktop-pet.git
+cd desktop-pet
 ./scripts/setup.sh
 ./scripts/run-macos.sh
 ```

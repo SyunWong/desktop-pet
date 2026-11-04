@@ -1,4 +1,4 @@
-# 大肥鱼 / DeepSeek-chan 桌宠
+# Desktop Pet / 桌宠
 
 可以拖动、喂米饭、疯狂炫饭、逗狗尾巴草，还能实时语音聊天的 macOS 桌宠。
 
@@ -9,13 +9,13 @@
 ```bash
 xcode-select --install
 npm install -g pnpm@10.11.0
-git clone https://github.com/SyunWong/deepseek-chan-desktop.git
-cd deepseek-chan-desktop
+git clone https://github.com/SyunWong/desktop-pet.git
+cd desktop-pet
 ./scripts/setup.sh
 ./scripts/run-macos.sh
 ```
 
-已经安装 Command Line Tools 可以跳过第一步。吃饭和玩草无需密钥。程序会在项目旁生成 `DeepSeek-chan.app`，并启动本地 Next.js 开发服务器。请保持 app 与 `voice/` 在同一个目录，Node 路径变化后重新运行构建脚本。
+已经安装 Command Line Tools 可以跳过第一步。吃饭和玩草无需密钥。程序会在项目旁生成 `Desktop Pet.app`，并启动本地 Next.js 开发服务器。请保持 app 与 `voice/` 在同一个目录，Node 路径变化后重新运行构建脚本。
 
 ## 语音配置
 
