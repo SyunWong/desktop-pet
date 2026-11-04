@@ -2,16 +2,21 @@
 
 A tiny floating macOS companion who loves rice, chases a foxtail, and talks with you.
 
-<img src="voice/public/whale.png" width="178" alt="DeepSeek-chan"/>
+| Hang out | Rice frenzy | Foxtail play |
+| :---: | :---: | :---: |
+| ![Idle desktop pet](docs/media/idle.png) | ![Eating rice with both hands](docs/media/rice.gif) | ![Pouncing on a foxtail](docs/media/foxtail.gif) |
 
 [中文说明](README.zh-CN.md) · [Recipe](docs/RECIPE.md) · [Credits](THIRD_PARTY_NOTICES.md)
 
-## What you can try
+## Play together
 
-- Drag the title bar to move her around your desktop.
-- **Feed Rice** for a snack, or **Rice Frenzy** for fast eating with both hands and kicking feet.
-- **Foxtail** opens a draggable toy. Hold the grass nearby for half a second and she pounces. Pull away during the jump and she misses.
-- **Start Chat** opens a voice conversation. The demo pairs DeepSeek with Fish Audio through Agora.
+Drag her title bar to bring her closer, offer a bowl of rice with **Feed Rice**, or choose **Rice Frenzy** to watch her eat with both hands and kick her feet.
+
+Try **Foxtail** to tease her with a draggable grass toy. Hold it nearby for half a second and she pounces. Let her catch it, or pull away mid-jump and watch her miss. These interactions work locally without API credentials.
+
+## Voice chat
+
+Click **Start Chat** to talk with her. The demo connects DeepSeek and Fish Audio through Agora for real-time voice conversation. You can mute your microphone or end the call from the controls below the interaction buttons. See [Voice setup](#voice-setup) to configure your own keys.
 
 ## Requirements and quick start
 

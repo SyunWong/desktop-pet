@@ -2,6 +2,20 @@
 
 可以拖动、喂米饭、疯狂炫饭、逗狗尾巴草，还能实时语音聊天的 macOS 桌宠。
 
+| 待机陪伴 | 疯狂炫饭 | 狗尾巴草 |
+| :---: | :---: | :---: |
+| ![待机的桌宠](docs/media/idle.png) | ![双手炫米饭](docs/media/rice.gif) | ![扑向狗尾巴草](docs/media/foxtail.gif) |
+
+## 和她互动
+
+拖动顶部名字，把她挪到身边。点 **Feed Rice** 喂一碗米饭，或者点 **Rice Frenzy**，看她两手疯狂炫饭、脚脚乱蹬。
+
+点 **Foxtail**，就能拖动狗尾巴草逗她玩。草尖在面前停半秒，她会起扑；你可以等她抓住，也可以在她跳起来时抽走，让她扑空。这些互动无需 API 密钥。
+
+## 语音聊天
+
+点互动按钮下面的 **Start Chat** 就能和她说话，也可以静音或挂断。语音由 Agora 连接 DeepSeek 和 Fish Audio，填写自己的密钥后即可体验，配置方法见下方。
+
 ## 安装运行
 
 需要 macOS、Apple Command Line Tools、Python 3、Node.js 22+ 和 pnpm 10。目前在 Apple Silicon Mac 上验证过，Intel Mac 尚未验证。
@@ -30,11 +44,9 @@ cd desktop-pet
 
 当前模型、音色、提示词及识别语言写在 `voice/app/api/invite-agent/route.ts`，可根据自己的账号可用性调整。默认语音识别语言为中文，角色使用 Fish Audio 时用英文回复。
 
-## 怎么玩
+## 浏览器预览
 
-拖动顶部名字移动窗口。Feed Rice 是喂米饭，Rice Frenzy 是疯狂炫饭。点击 Foxtail，拖动草尖到她面前停半秒，她会起扑；起扑时抽走草尖就会扑空。
-
-浏览器预览可以在 `voice/` 运行 `pnpm dev --hostname 127.0.0.1`，访问 http://127.0.0.1:3000。
+在 `voice/` 运行 `pnpm dev --hostname 127.0.0.1`，访问 http://127.0.0.1:3000。
 
 ## 复刻和贡献
 
