@@ -31,7 +31,7 @@ A transparent floating macOS companion with local pointer interactions and real-
 | Rice, kicking, foxtail | `voice/components/Pet.tsx`, `voice/app/globals.css` |
 | Name and visible text | `Whale.swift`, `Pet.tsx`, `LandingPage.tsx`, `ConversationComponent.tsx` |
 | Personality and language | `voice/app/api/invite-agent/route.ts` |
-| LLM/TTS configuration | `voice/app/api/invite-agent/route.ts` |
+| STT/LLM/TTS configuration | `voice/app/api/invite-agent/route.ts` |
 | Native PCM playback | `Whale.swift`, `voice/components/ConversationComponent.tsx` |
 
 Animations are aligned to this character's image coordinates. Replacing the image requires adjusting the mouth, sleeves and foot masks.
@@ -40,7 +40,7 @@ Animations are aligned to this character's image coordinates. Replacing the imag
 
 The original token/invite/stop routes and RTC/RTM lifecycle are retained. The pet reacts to conversation state through its `action` prop. The desktop host accepts audio messages only from its loopback origin and main frame. A browser uses the HTML audio path.
 
-The optional-key fallbacks and fixed STT language are documented in the README. The native app launches a development server and requires the source tree and Node installation on the local machine.
+The author’s STT/LLM/TTS choices, optional-key fallbacks and STT language are documented in the README. Developers can replace each provider through its SDK configuration and server-side credentials, and align the prompt and greeting with the selected language. The native app launches a development server and requires the source tree and Node installation on the local machine.
 
 ## Contribution scope
 

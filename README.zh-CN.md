@@ -33,7 +33,9 @@ cd desktop-pet
 
 ## 语音配置
 
-在 setup 生成的 `voice/.env.local` 填写自己的配置。
+下面的 STT、LLM 和 TTS 是作者录制 demo 时的个人选择。开发者可以选择自己的 Agora 集成支持的其他服务商，并按需求调整识别语言、模型和音色。
+
+如果要复现当前 demo，在 setup 生成的 `voice/.env.local` 填写自己的配置。
 
 - `NEXT_PUBLIC_AGORA_APP_ID` 和 `NEXT_AGORA_APP_CERTIFICATE` 来自同一个 Agora 项目，项目需开通 Conversational AI。
 - `DEEPSEEK_API_KEY` 用于 DeepSeek。
@@ -42,7 +44,17 @@ cd desktop-pet
 
 点 **Start Chat** 并允许麦克风访问。结束时点 **End Call**。语音调用需要网络，服务商可能收费。
 
-当前模型、音色、提示词及识别语言写在 `voice/app/api/invite-agent/route.ts`，可根据自己的账号可用性调整。默认语音识别语言为中文，角色使用 Fish Audio 时用英文回复。
+### Demo 配置与替换位置
+
+| 环节 | 作者的 demo 选择 | 可调整内容 |
+| --- | --- | --- |
+| 语音识别 STT | Deepgram `nova-3`，`zh-CN` | 服务商、识别模型、输入语言 |
+| 对话模型 LLM | DeepSeek `deepseek-flash`，关闭 thinking | 服务商、模型、提示词、生成参数 |
+| 语音合成 TTS | Fish Audio `s2-pro`，示例音色 | 服务商、语音模型、音色、输出语言 |
+
+在 `voice/app/api/invite-agent/route.ts` 的 `.withStt(...)`、`.withLlm(...)` 和 `.withTts(...)` 中修改对应配置。更换服务商时，需要同步修改 SDK provider 配置和服务端环境变量；同一服务商内换模型或音色，可调整对应参数。具体可用范围以你的账号及 SDK 版本支持情况为准。
+
+当前代码会在存在 Fish Audio key 时启用英文提示词和开场白。换成其他语音服务商或语言时，也请在同一文件中调整提示词和开场白。
 
 ## 浏览器预览
 

@@ -37,7 +37,9 @@ The app starts a local Next.js development server on a random loopback port. Kee
 
 ## Voice setup
 
-Edit `voice/.env.local`, created by setup.
+The author chose the providers below for this demo. Developers can choose other STT, LLM, and TTS providers supported by their Agora integration, along with their preferred languages, models, and voices.
+
+To reproduce the included configuration, edit `voice/.env.local`, created by setup.
 
 | Variable | Purpose |
 | --- | --- |
@@ -48,7 +50,17 @@ Edit `voice/.env.local`, created by setup.
 
 Enable Conversational AI in your Agora project and ensure the configured providers are available to your account. Calls can incur provider charges. Set both optional keys to reproduce the English voice demo. With neither optional key, the code uses Agora-managed OpenAI and MiniMax with a Chinese greeting.
 
-The demo configuration in `voice/app/api/invite-agent/route.ts` uses `deepseek-flash` with thinking disabled, Fish Audio `s2-pro` and reference ID `091cad5003ed4e90826a92e1fadde278`. Provider/model/voice availability can vary by account. Change these values in that file if necessary. STT is configured as `nova-3`, `zh-CN`; change the language there for your intended audience.
+### Demo choices and customization
+
+| Stage | Author’s demo choice | What you can customize |
+| --- | --- | --- |
+| Speech recognition (STT) | Deepgram `nova-3`, `zh-CN` | Provider, recognition model and input language |
+| Conversation (LLM) | DeepSeek `deepseek-flash`, thinking disabled | Provider, model, prompt and generation settings |
+| Speech synthesis (TTS) | Fish Audio `s2-pro`, voice reference `091cad5003ed4e90826a92e1fadde278` | Provider, speech model, voice and output language |
+
+Configure these stages in `voice/app/api/invite-agent/route.ts`, using the `.withStt(...)`, `.withLlm(...)`, and `.withTts(...)` sections. To switch providers, update the corresponding SDK provider configuration and its server-side environment variables. Changing models or voices within the same provider may only require updating that provider’s settings. Check support and availability for your account and SDK version.
+
+The included code also ties the English greeting/persona to the presence of a Fish Audio key. When choosing another voice provider or language, update the prompt and greeting in the same file to match.
 
 Start Chat, grant microphone access, speak, then use **End Call** to finish. The macOS shell forwards audio to AVAudioEngine for native playback, including headphones. Browser previews use HTML audio playback.
 
