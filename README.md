@@ -53,7 +53,7 @@ cd desktop-pet
 
 Setup installs the locked dependencies and creates `voice/.env.local` if it is missing. The run script builds and opens `Desktop Pet.app`. Expect a small floating character with interaction buttons and **Start Chat**. Try Feed Rice, Rice Frenzy, and a foxtail catch/miss first; these work without API keys. Drag the title to move her and click × to quit.
 
-The app starts a local Next.js development server on a random loopback port. Keep the generated app beside `voice/`. Close the existing window before running the launch script again. Rebuild after changing your Node installation. The app bundle needs this source directory and the installed Node packages to run.
+The build script compiles the web UI into `voice/.next-desktop/` before building the native app. The app starts a local Next.js production server on a random loopback port, so development-only Issues indicators do not appear in the desktop window. Keep the generated app beside `voice/`. Close the existing window before running the launch script again. Rebuild after changing source code, `voice/.env.local`, or your Node installation. The app bundle needs this source directory and the installed Node packages to run.
 
 ## Voice setup
 
@@ -90,7 +90,7 @@ pnpm doctor
 cd ..
 ```
 
-Doctor checks the local setup and that the two Agora variables have values. A successful call verifies credentials and provider access. Close and reopen the desktop app after changing `.env.local`, then click **Start Chat**, allow microphone access, and speak. Expect an audible greeting and a response to your voice. Try **Mute**, **Unmute**, and **End Call**, then start a second call to verify reconnection. The macOS shell forwards audio to AVAudioEngine for native playback, including headphones. Browser previews use HTML audio playback.
+Doctor checks the local setup and that the two Agora variables have values. A successful call verifies credentials and provider access. Rebuild with `./scripts/build-macos.sh` and reopen the desktop app after changing `.env.local`, then click **Start Chat**, allow microphone access, and speak. Expect an audible greeting and a response to your voice. Try **Mute**, **Unmute**, and **End Call**, then start a second call to verify reconnection. The macOS shell forwards audio to AVAudioEngine for native playback, including headphones. Browser previews use HTML audio playback.
 
 ## Browser preview
 
@@ -118,10 +118,11 @@ Run these checks from the repository root. They can run with the blank configura
 cd voice
 pnpm typecheck
 pnpm verify:api
-pnpm build
+node scripts/verify-rtm-lifecycle.mjs
+pnpm build:desktop
 ```
 
-For changes to `Whale.swift`, run `./scripts/build-macos.sh` from the repository root. The front end uses development hot reload; closing and reopening the app loads a newly built native executable. See [validation results](docs/VALIDATION.md) for checks and limitations of this source release.
+After source or configuration changes, close the app, run `./scripts/build-macos.sh` from the repository root, and reopen it. This rebuilds both the web UI and native executable. Browser development with `pnpm dev` still supports hot reload and uses `.next/`, separate from the desktop build. See [validation results](docs/VALIDATION.md) for checks and limitations of this source release.
 
 ## Reproduce with your coding assistant
 
@@ -146,7 +147,9 @@ For provider changes, look up the selected provider in the installed SDK and its
 
 ## Troubleshooting
 
-- Startup failed — check `desktop.log`, run setup, and rebuild after a Node path change.
+- Startup failed or build missing — check `desktop.log`, run setup, and run `./scripts/build-macos.sh`.
+- Red Issues badge in a desktop window — that is the Next.js development overlay. Rebuild and reopen the current app, which uses production mode. Real connection failures still appear in the pet’s status; tap a voice notice to dismiss it, or end and retry a failed call.
+- Failed chat startup — partial RTM connections are closed before retry; ending a call or unloading the page also releases them.
 - No microphone — allow access in macOS Privacy & Security, then restart the call.
 - No sound — check system output and volume, use **Enable Sound** if shown, and reconnect.
 - Voice connection fails — check credentials, Agora feature enablement and provider access.

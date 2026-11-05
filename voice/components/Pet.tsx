@@ -100,7 +100,7 @@ function GrassGame() {
   </>;
 }
 
-export function Pet({label, action = 'idle', children}: { label?: string; action?: string; children?: ReactNode }) {
+export function Pet({label, action = 'idle', children, onLabelClick}: { label?: string; action?: string; children?: ReactNode; onLabelClick?: () => void }) {
   const [sleepPhase, setSleepPhase] = useState<SleepPhase>('awake');
   const [lastInteraction, setLastInteraction] = useState(() => Date.now());
   const voiceActive = action !== 'idle';
@@ -165,7 +165,9 @@ export function Pet({label, action = 'idle', children}: { label?: string; action
         {action === 'talking' && <span className="mouth"/>}
       </>}
     </div>
-    <div className="badge" role="status">{play ? lines[play.kind] : label}</div>
+    {!play && onLabelClick
+      ? <button className="badge" onClick={onLabelClick} title="Dismiss this notice; if chat still fails, end the call and retry">{label}</button>
+      : <div className="badge" role="status">{play ? lines[play.kind] : label}</div>}
     </>}
     <nav aria-label="Playtime"><button onClick={() => start('rice')}>Feed Rice</button><button onClick={() => start('turbo')}>Rice Frenzy</button><button onClick={() => start('grass')}>Foxtail</button></nav>
     <nav aria-label="Voice chat">{children}<button onClick={rest} disabled={voiceActive || sleepPhase === 'waking'} title={voiceActive ? 'Finish your call before sleeping' : 'Also sleeps after 5 minutes without interaction'}>{sleepPhase === 'awake' ? 'Sleep' : 'Wake up'}</button></nav>

@@ -115,6 +115,7 @@ export default function ConversationComponent({
   >([]);
   const [agentState, setAgentState] = useState<AgentState | null>(null);
   const [agentMetrics, setAgentMetrics] = useState<QuickstartAgentMetric[]>([]);
+  const [acknowledgedIssue, setAcknowledgedIssue] = useState<ConnectionIssue | null>(null);
   const [connectionIssues, setConnectionIssues] = useState<ConnectionIssue[]>(
     [],
   );
@@ -538,8 +539,12 @@ export default function ConversationComponent({
     onEndConversation();
   }, [onEndConversation]);
 
+  const latestIssue = connectionIssues[0];
+  const hasNewIssue = latestIssue && latestIssue !== acknowledgedIssue;
   const labels: Record<string,string> = {listening:'Listening', talking:'Speaking', analyzing:'Thinking…', ambient:'I’m here', disconnected:'Disconnected', joining:'Connecting…', 'not-joined':'Waiting for DeepSeek-chan…'};
-  return <Pet action={visualizerState} label={subscriptionError ? 'Audio connection failed. Please retry.' : connectionIssues.length ? 'Connection failed. Please retry.' : labels[visualizerState]}>
+  return <Pet action={visualizerState}
+    onLabelClick={!subscriptionError && hasNewIssue ? () => setAcknowledgedIssue(latestIssue) : undefined}
+    label={subscriptionError ? 'Audio connection failed. Please retry.' : hasNewIssue ? 'Voice issue · Tap to dismiss' : labels[visualizerState]}>
     <audio ref={audioRef} autoPlay onPlaying={() => setPlayBlocked(false)}/>
     {playBlocked && <button onClick={() => void audioRef.current?.play().catch(() => setPlayBlocked(true))}>Enable Sound</button>}
     <button onClick={handleMicToggle}>{isEnabled ? 'Mute' : 'Unmute'}</button>

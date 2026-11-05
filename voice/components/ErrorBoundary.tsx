@@ -38,7 +38,7 @@ export class ErrorBoundary extends React.Component<
 
       return (
         // Last-resort recovery UI for client-only conversation failures.
-        <div className="flex flex-col items-center justify-center min-h-[320px] p-8 text-center">
+        <div className="flex flex-col items-center justify-center min-h-[210px] p-3 text-center">
           <div className="max-w-md">
             <h2 className="text-lg font-semibold text-destructive mb-4">
               Something went wrong

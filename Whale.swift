@@ -69,10 +69,13 @@ final class Companion: NSObject, NSApplicationDelegate, WKUIDelegate, WKScriptMe
         message("Waking up…")
         let node = Bundle.main.object(forInfoDictionaryKey:"WhaleNode") as! String
         server.executableURL=URL(fileURLWithPath:node); server.currentDirectoryURL=voice
-        server.arguments=["node_modules/next/dist/bin/next","dev","--webpack","--hostname","127.0.0.1","--port",String(port)]
+        guard FileManager.default.fileExists(atPath:voice.appendingPathComponent(".next-desktop/BUILD_ID").path) else {
+            message("Please build first: ./scripts/build-macos.sh"); return
+        }
+        server.arguments=["node_modules/next/dist/bin/next","start","--hostname","127.0.0.1","--port",String(port)]
         var env=ProcessInfo.processInfo.environment
         env["PATH"]=URL(fileURLWithPath:node).deletingLastPathComponent().path+":"+(env["PATH"] ?? "/usr/bin:/bin")
-        env["NEXT_TELEMETRY_DISABLED"]="1";server.environment=env
+        env["NEXT_TELEMETRY_DISABLED"]="1"; env["WHALE_DESKTOP_BUILD"]="1"; env["NODE_ENV"]="production"; server.environment=env
         let log=root.appendingPathComponent("desktop.log")
         FileManager.default.createFile(atPath:log.path,contents:nil)
         if let out=try? FileHandle(forWritingTo:log){ server.standardOutput=out;server.standardError=out }

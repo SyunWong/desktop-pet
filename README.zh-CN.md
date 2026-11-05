@@ -51,7 +51,7 @@ cd desktop-pet
 
 Setup 安装锁定版本的依赖，并在缺少配置文件时创建 `voice/.env.local`。启动脚本会编译并打开 `Desktop Pet.app`。你应该看到悬浮角色、互动按钮和 **Start Chat**。先尝试喂饭、炫饭、狗尾巴草的抓住和扑空，这些无需 API 密钥。拖动标题移动窗口，点 × 退出。
 
-程序会启动本地 Next.js 开发服务器。请保持 app 与 `voice/` 在同一个目录；再次运行启动脚本前先关闭旧窗口。Node 路径变化后重新构建。运行 app 需要保留源码目录和已安装的 Node 依赖。
+构建脚本会先将网页编译到 `voice/.next-desktop/`，再构建桌面 app。app 启动本地 Next.js 生产服务器，桌宠窗口不会显示开发模式的 Issues 提示。请保持 app 与 `voice/` 在同一个目录；再次运行启动脚本前先关闭旧窗口。修改源码、`voice/.env.local` 或 Node 路径后，请重新构建。运行 app 需要保留源码目录和已安装的 Node 依赖。
 
 ## 语音配置
 
@@ -72,7 +72,7 @@ pnpm doctor
 cd ..
 ```
 
-Doctor 检查本地环境和两项 Agora 变量是否已填写。密钥有效性和服务商访问权限需要通过实际通话确认。修改 `.env.local` 后关闭并重新打开桌宠，点 **Start Chat**，允许麦克风访问。应该能听到开场白，并在说话后收到回应。试一下静音、取消静音、挂断，再发起一次通话，确认能重新连接。语音调用需要网络，服务商可能收费。
+Doctor 检查本地环境和两项 Agora 变量是否已填写。密钥有效性和服务商访问权限需要通过实际通话确认。修改 `.env.local` 后，先关闭桌宠、运行 `./scripts/build-macos.sh` 重新构建，再打开桌宠，点 **Start Chat**，允许麦克风访问。应该能听到开场白，并在说话后收到回应。试一下静音、取消静音、挂断，再发起一次通话，确认能重新连接。语音调用需要网络，服务商可能收费。
 
 ### Demo 配置与替换位置
 
@@ -122,10 +122,11 @@ voice/.env.local 中。先验证喂饭、炫饭和玩草；能操作浏览器时
 cd voice
 pnpm typecheck
 pnpm verify:api
-pnpm build
+node scripts/verify-rtm-lifecycle.mjs
+pnpm build:desktop
 ```
 
-修改 `Whale.swift` 后，在仓库根目录运行 `./scripts/build-macos.sh`，关闭并重新打开 app。前端开发支持热更新。文件职责和服务商配置入口见 [Recipe](docs/RECIPE.md)。替换角色图片后，还需要调整嘴、袖子、脚部遮罩等动画坐标。
+修改源码或配置后，先关闭 app，在仓库根目录运行 `./scripts/build-macos.sh`，再重新打开；脚本会重建网页和桌面程序。浏览器开发仍可使用 `pnpm dev` 热更新，其 `.next/` 目录与桌宠构建分开。文件职责和服务商配置入口见 [Recipe](docs/RECIPE.md)。替换角色图片后，还需要调整嘴、袖子、脚部遮罩等动画坐标。
 
 - 启动失败时查看 `desktop.log`，确认 setup 已完成，Node 路径改变后重新构建。
 - 麦克风无声时检查 macOS 隐私设置，再重新发起通话。
@@ -149,3 +150,7 @@ pnpm build
 项目结构、排障方法和数据说明见 [英文 README](README.md)。可复用的 recipe 说明见 [docs/RECIPE.md](docs/RECIPE.md)。提交前运行类型检查、API 合约验证和构建，验证记录见 [docs/VALIDATION.md](docs/VALIDATION.md)。
 
 请勿提交 `.env.local`、`.agora/`、日志、依赖目录或本机构建的 app。素材和上游代码署名见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+### 桌面报错提示
+
+桌宠如果出现红色 Issues 角标，说明运行的是 Next.js 开发模式，请重新构建并打开新版 app。真实的语音错误仍会显示在桌宠状态栏；可以点击收起提示，无法聊天时结束后重试。聊天初始化失败时会清理已创建的 RTM 连接，避免每次重试残留连接。

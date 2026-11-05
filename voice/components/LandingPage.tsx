@@ -9,7 +9,6 @@ import type {
   AgoraRenewalTokens,
 } from '../types/conversation';
 import { ErrorBoundary } from './ErrorBoundary';
-import { LoadingSkeleton } from './LoadingSkeleton';
 
 
 // Dynamically import the ConversationComponent with ssr disabled
@@ -66,7 +65,31 @@ export default function LandingPage() {
   const [agoraData, setAgoraData] = useState<AgoraTokenData | null>(null);
   const [rtmClient, setRtmClient] = useState<RTMClient | null>(null);
 
+  const activeRtm = useRef<RTMClient | null>(null);
+  const starting = useRef(false);
+  const mounted = useRef(false);
+  const generation = useRef(0);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      generation.current += 1;
+      starting.current = false;
+      const rtm = activeRtm.current;
+      activeRtm.current = null;
+      void rtm?.logout().catch(() => console.warn('Could not close RTM connection'));
+    };
+  }, []);
+
   const handleStartConversation = async () => {
+    // State updates do not synchronously disable the button: guard rapid clicks too.
+    if (starting.current || activeRtm.current || !mounted.current) return;
+    starting.current = true;
+    const attempt = ++generation.current;
+    const isCurrent = () => mounted.current && generation.current === attempt;
+    let rtm: RTMClient | null = null;
+    let connected = false;
     setIsLoading(true);
     setError(null);
 
@@ -83,18 +106,34 @@ export default function LandingPage() {
         );
       }
 
+      if (!isCurrent()) return;
       const { default: AgoraRTM } = await import('agora-rtm');
-      const rtm: RTMClient = new AgoraRTM.RTM(process.env.NEXT_PUBLIC_AGORA_APP_ID!, responseData.uid);
+      if (!isCurrent()) return;
+      rtm = new AgoraRTM.RTM(process.env.NEXT_PUBLIC_AGORA_APP_ID!, responseData.uid);
+      activeRtm.current = rtm;
       await rtm.login({ token: responseData.token });
+      if (!isCurrent()) return;
       await rtm.subscribe(responseData.channel);
+      if (!isCurrent()) return;
+      connected = true;
       setRtmClient(rtm);
       setAgoraData(responseData);
       setShowConversation(true);
     } catch (err) {
-      setError('Could not start the chat. Please try again.');
-      console.error('Error starting conversation:', err);
+      if (isCurrent()) {
+        setError('Could not start the chat. Please try again.');
+        console.warn('Voice chat startup failed:', err);
+      }
     } finally {
-      setIsLoading(false);
+      // A late login must also be logged out after unmount/cancellation.
+      if (!connected && rtm) {
+        if (activeRtm.current === rtm) activeRtm.current = null;
+        await rtm.logout().catch(() => console.warn('Could not close failed RTM connection'));
+      }
+      if (isCurrent()) {
+        starting.current = false;
+        setIsLoading(false);
+      }
     }
   };
 
@@ -137,9 +176,14 @@ export default function LandingPage() {
 
   const handleEndConversation = async () => {
     // Tear down RTM — owned here since we created it here
-    rtmClient?.logout().catch((err) => console.error('RTM logout error:', err));
+    generation.current += 1;
+    const rtm = activeRtm.current;
+    activeRtm.current = null;
+    starting.current = false;
     setRtmClient(null);
+    setAgoraData(null);
     setShowConversation(false);
+    await rtm?.logout().catch(() => console.warn('Could not close RTM connection'));
   };
 
   if (showConversation && agoraData && rtmClient) {

@@ -5,6 +5,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 command -v node >/dev/null || { echo "Install Node.js 22+ first."; exit 1; }
 xcrun --find swiftc >/dev/null || { echo "Install Apple Command Line Tools: xcode-select --install"; exit 1; }
 [ -f "$ROOT/voice/node_modules/next/dist/bin/next" ] || { echo "Run ./scripts/setup.sh first."; exit 1; }
+# Build before opening the desktop shell: no dev overlays in the floating window.
+node "$ROOT/voice/scripts/build-desktop.mjs"
 APP="$ROOT/Desktop Pet.app"
 mkdir -p "$APP/Contents/MacOS"
 swiftc "$ROOT/Whale.swift" -o "$APP/Contents/MacOS/Whale"
