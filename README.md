@@ -4,7 +4,7 @@ A tiny floating macOS companion who loves rice, chases a foxtail, and talks with
 
 | Hang out | Feed rice | Rice frenzy | Foxtail play | Sleep & wake |
 | :---: | :---: | :---: | :---: | :---: |
-| ![Idle](docs/media/idle.png) | ![Eating rice](docs/media/feed-rice.gif) | ![Steel-basin rice frenzy](docs/media/rice.gif) | ![Foxtail play](docs/media/foxtail.gif) | ![Sleep and wake](docs/media/sleep.gif) |
+| ![Idle](docs/media/idle-v2.png) | ![Eating rice](docs/media/feed-rice-v2.gif) | ![Steel-basin rice frenzy](docs/media/rice-frenzy-v2.gif) | ![Foxtail play](docs/media/foxtail-v2.gif) | ![Sleep and wake](docs/media/sleep-v2.gif) |
 
 [中文说明](README.zh-CN.md) · [Recipe](docs/RECIPE.md) · [Credits](THIRD_PARTY_NOTICES.md)
 

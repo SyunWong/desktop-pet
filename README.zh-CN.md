@@ -4,7 +4,7 @@
 
 | 待机陪伴 | 吃米饭 | 铁盆炫饭 | 狗尾巴草 | 睡觉与唤醒 |
 | :---: | :---: | :---: | :---: | :---: |
-| ![待机](docs/media/idle.png) | ![吃米饭](docs/media/feed-rice.gif) | ![铁盆炫饭](docs/media/rice.gif) | ![狗尾巴草](docs/media/foxtail.gif) | ![睡觉](docs/media/sleep.gif) |
+| ![待机](docs/media/idle-v2.png) | ![吃米饭](docs/media/feed-rice-v2.gif) | ![铁盆炫饭](docs/media/rice-frenzy-v2.gif) | ![狗尾巴草](docs/media/foxtail-v2.gif) | ![睡觉](docs/media/sleep-v2.gif) |
 
 ## 和她互动
 
