@@ -14,6 +14,8 @@ Changes include the pet UI, DeepSeek/Fish Audio configuration, voice turn timing
 
 The source project describes the character as a fan-created DeepSeek whale girl. Its repository MIT license is preserved verbatim in `licenses/character-MIT.txt`. Character and brand names belong to their respective owners. The package contains the existing final front image.
 
+The action sprite strips in `voice/public/actions/` are AI-generated derivatives based on the character reference, covering rice, steel-basin rice frenzy, foxtail play, and sleep/wake poses. The README GIFs are previews assembled from these strips.
+
 ## Dependencies
 
 Dependency versions are recorded in `voice/pnpm-lock.yaml`. Dependencies retain their respective licenses.

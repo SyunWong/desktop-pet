@@ -204,25 +204,11 @@ html,body { background: transparent !important; margin:0; overflow:hidden; }
 @keyframes chat-mouth {from {transform:scaleY(.12)} to {transform:scaleY(1.3)}}
 .pet .character {height:150px;width:112px;flex:none;}
 .pet .toy {position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
-.pet .chopsticks {animation:pick-rice var(--bite-time) ease-in-out var(--bites);}
-.pet .bite {animation:eat-grain var(--bite-time) linear var(--bites);}
-@keyframes pick-rice {0%,100% {transform:translateY(7px)} 48%,62% {transform:translate(-3px,-15px)}}
-@keyframes eat-grain {0%,48%,100% {opacity:1} 54%,92% {opacity:0}}
 .pet .foxtail {transform-origin:131px 179px;animation:tickle 2.3s ease-in-out 3;}
 @keyframes tickle {0%,100% {transform:rotate(12deg)} 28% {transform:rotate(-13deg)} 54% {transform:rotate(-32deg) scale(1.35,.98)} 75% {transform:rotate(4deg) scale(1.15,1)}}
 
 .pet nav[aria-label="Playtime"] {gap:3px;}
 .pet nav[aria-label="Playtime"] button {padding:4px 5px;font-size:12px;white-space:nowrap;}
-.character[data-play=turbo] .mouth {animation:gulp var(--bite-time) ease-in-out var(--bites);}
-@keyframes gulp {0%,75%,100% {transform:scaleY(.15)} 48%,60% {transform:scaleY(1.6)}}
-.character[data-play=turbo] {--arm-cycle:calc(var(--bite-time) * 2);}
-.character[data-play=turbo] .chopsticks,.character[data-play=turbo] .bite {animation-duration:var(--arm-cycle);}
-.other-hand .chopsticks,.other-hand .bite {animation-delay:calc(0ms - var(--bite-time));}
-.character[data-play=turbo] img {clip-path:polygon(0 0,100% 0,100% 100%,64% 100%,64% 93%,29% 93%,29% 100%,0 100%);}
-.pet .kick {position:absolute;inset:0;background:url('/whale.png') center / 100% 100% no-repeat;animation:happy-kick .23s ease-in-out infinite alternate;}
-.foot-left {clip-path:inset(93% 52% 0 29%);transform-origin:40% 93%;}
-.pet .foot-right {clip-path:inset(93% 36% 0 48%);transform-origin:54% 93%;animation-direction:alternate-reverse;}
-@keyframes happy-kick {from {transform:rotate(-32deg) translateY(-1px)} to {transform:rotate(32deg) translateY(1px)}}
 .pet .character {isolation:isolate;}
 
 .grass-stage { position:relative; width:100%; height:150px; flex:none; display:grid; place-items:center; overflow:hidden; touch-action:none; cursor:grab; }
@@ -233,5 +219,15 @@ html,body { background: transparent !important; margin:0; overflow:hidden; }
 @keyframes grass-hop { 0% { transform:rotate(var(--lean)); } 45% { transform:scale(1.05,.91); } 100% { transform:translate(var(--hop-x),var(--hop-y)) rotate(var(--lean)); } }
 .grass-stage[data-phase=missed] .grass-pet,.grass-stage[data-phase=caught] .grass-pet { animation:grass-land .32s ease-out; }
 @keyframes grass-land { from { transform:translate(var(--hop-x),var(--hop-y)) rotate(var(--lean)); } to { transform:none; } }
-.grass-lure { position:absolute; width:112px; height:150px; transform:translate(-76%,-24%); pointer-events:none; }
-.grass-lure .foxtail { animation:none; }
+.grass-lure { position:absolute; width:34px; height:70px; transform:translate(-65%,-20%); pointer-events:none; }
+.foxtail-art { display:block; width:100%; height:100%; object-fit:contain; }
+
+.pet .character.animated-character { width:150px; height:150px; }
+.pose-strip { display:block; position:relative; width:100%; height:100%; overflow:hidden; }
+.pet .pose-strip img { position:absolute; top:0; left:0; max-width:none; height:100%; animation:pet-pose-frames var(--pose-time) steps(var(--pose-frames)) infinite; }
+@keyframes pet-pose-frames { from { transform:translateX(0); } to { transform:translateX(-100%); } }
+
+.sleep-stage { width:100%; height:150px; flex:none; display:flex; justify-content:center; }
+.pet .sleep-character { display:block; width:150px; height:150px; flex:none; padding:0; border:0; border-radius:0; background:transparent; transition:transform .7s ease-in-out; }
+.pet[data-sleep=asleep] .sleep-character { transform:translateX(28px); }
+.pet .sleep-character:focus-visible { outline:2px solid #8abaff; }

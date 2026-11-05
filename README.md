@@ -2,9 +2,9 @@
 
 A tiny floating macOS companion who loves rice, chases a foxtail, and talks with you.
 
-| Hang out | Rice frenzy | Foxtail play |
-| :---: | :---: | :---: |
-| ![Idle desktop pet](docs/media/idle.png) | ![Eating rice with both hands](docs/media/rice.gif) | ![Pouncing on a foxtail](docs/media/foxtail.gif) |
+| Hang out | Feed rice | Rice frenzy | Foxtail play | Sleep & wake |
+| :---: | :---: | :---: | :---: | :---: |
+| ![Idle](docs/media/idle.png) | ![Eating rice](docs/media/feed-rice.gif) | ![Steel-basin rice frenzy](docs/media/rice.gif) | ![Foxtail play](docs/media/foxtail.gif) | ![Sleep and wake](docs/media/sleep.gif) |
 
 [中文说明](README.zh-CN.md) · [Recipe](docs/RECIPE.md) · [Credits](THIRD_PARTY_NOTICES.md)
 
@@ -13,6 +13,8 @@ A tiny floating macOS companion who loves rice, chases a foxtail, and talks with
 Drag her title bar to bring her closer, offer a bowl of rice with **Feed Rice**, or choose **Rice Frenzy** to watch her eat with both hands and kick her feet.
 
 Try **Foxtail** to tease her with a draggable grass toy. Hold it nearby for half a second and she pounces. Let her catch it, or pull away mid-jump and watch her miss. These interactions work locally without API credentials.
+
+Click **Sleep** to watch her get drowsy and curl up beside you. Click her or **Wake up** to wake her; feeding and playing also wake her immediately. After 5 minutes without interaction in the pet window, she sleeps automatically. Sleep is disabled during voice calls.
 
 ## Voice chat
 
@@ -159,7 +161,7 @@ Voice chat sends microphone audio to Agora and its configured speech/LLM provide
 
 Planned directions for future versions, with scope and timing still open.
 
-- **More expressions and reactions** — closed eyes, happy, sleepy, surprised, and richer responses to interaction.
+- **More expressions and reactions** — closed eyes, happy, surprised, and richer responses to interaction.
 - **More characters** — additional pets and a simpler way to switch character artwork, personalities, and voices.
 - **Tasks through conversation** — tell your companion what you want to get done, connect it to tools, and hear progress and results in the same conversation. For example, ask it to summarize a document or organize a set of notes, with confirmation for actions that need it.
 
