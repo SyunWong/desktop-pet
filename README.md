@@ -59,12 +59,52 @@ The build script compiles the web UI into `voice/.next-desktop/` before building
 
 The author chose the providers below for this demo. Developers can choose other STT, LLM, and TTS providers supported by their Agora integration, along with their preferred languages, models, and voices.
 
-To reproduce the included configuration, open `voice/.env.local` in your editor after running setup. Enter one `NAME=value` per line and keep the file local. Obtain the Agora App ID and matching App Certificate from your project in the Agora Console. Enable Conversational AI for that project. Obtain optional provider keys from your own DeepSeek and Fish Audio accounts.
+### Configure Agora with the CLI
+
+After running setup, use the [Agora CLI](https://github.com/AgoraIO/cli) to select a project and write its credentials. This custom repository uses `agora project env write` with an explicit Next.js layout and file path. You do not need to copy Agora credentials from the Console.
+
+Install the CLI if needed (macOS/Linux):
+
+```bash
+curl -fsSL https://dl.agora.io/cli/install.sh | sh
+```
+
+Check the installation, then log in to the global region used by this demo's `Area.US` configuration:
+
+```bash
+agora version
+agora doctor --json
+agora login --region global
+agora project list --refresh-cache
+```
+
+The commands below were checked against CLI 0.2.9. If your CLI does not support `project env write --template`, update it using the official installation instructions before continuing.
+
+Choose an existing project from the list. If you need a new one, create it through the CLI first:
+
+```bash
+agora project create desktop-pet --feature rtc --feature convoai
+```
+
+From the **repository root**, replace `YOUR_PROJECT_ID_OR_NAME` with your chosen project's ID or exact name, then run:
+
+```bash
+agora project use "YOUR_PROJECT_ID_OR_NAME"
+agora project feature enable convoai "YOUR_PROJECT_ID_OR_NAME"
+agora project env write voice/.env.local --template nextjs --project "YOUR_PROJECT_ID_OR_NAME"
+agora project doctor --feature convoai
+```
+
+The explicit `--project` ensures the env file uses your chosen project even if the repository already has a different local binding. The CLI writes `NEXT_PUBLIC_AGORA_APP_ID` and `NEXT_AGORA_APP_CERTIFICATE` to `voice/.env.local` and records the local project binding in `.agora/project.json`. Keep both files local. Use the same env-write command when changing projects or refreshing credentials. Do not add `--overwrite`: the normal update preserves other settings, including provider keys.
+
+### Optional provider keys
+
+To reproduce the included DeepSeek and Fish Audio demo, open `voice/.env.local` and add only your provider keys from those accounts, one `NAME=value` per line. The Agora values are managed by the CLI.
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_AGORA_APP_ID` | Your Agora project App ID |
-| `NEXT_AGORA_APP_CERTIFICATE` | Matching App Certificate, used server-side |
+| `NEXT_PUBLIC_AGORA_APP_ID` | Agora project App ID, written by the CLI |
+| `NEXT_AGORA_APP_CERTIFICATE` | Matching App Certificate, written by the CLI and used server-side |
 | `DEEPSEEK_API_KEY` | Optional, selects the demo's DeepSeek LLM |
 | `FISH_AUDIO_API_KEY` | Optional, selects Fish Audio and the English greeting/persona |
 
@@ -78,7 +118,7 @@ Ensure the configured providers are available to your account. Calls can incur p
 | Conversation (LLM) | DeepSeek `deepseek-flash`, thinking disabled | Provider, model, prompt and generation settings |
 | Speech synthesis (TTS) | Fish Audio `s2-pro`, voice reference `091cad5003ed4e90826a92e1fadde278` | Provider, speech model, voice and output language |
 
-Configure these stages in `voice/app/api/invite-agent/route.ts`, using the `.withStt(...)`, `.withLlm(...)`, and `.withTts(...)` sections. To switch providers, update the corresponding SDK provider configuration and its server-side environment variables. Changing models or voices within the same provider may only require updating that provider’s settings. Check support and availability for your account and SDK version.
+The `PET_SYSTEM_PROMPT` constant in `voice/app/api/invite-agent/route.ts` defines the pet’s personality; it is an ordinary application variable, not an SDK identifier. Configure these stages in the same file, using the `.withStt(...)`, `.withLlm(...)`, and `.withTts(...)` sections. To switch providers, update the corresponding SDK provider configuration and its server-side environment variables. Changing models or voices within the same provider may only require updating that provider’s settings. Check support and availability for your account and SDK version.
 
 The included code also ties the English greeting/persona to the presence of a Fish Audio key. When choosing another voice provider or language, update the prompt and greeting in the same file to match.
 
@@ -133,12 +173,14 @@ Set up and run this Desktop Pet repository on my machine.
 Read README.md, scripts/setup.sh, and scripts/run-macos.sh first.
 Check my OS and prerequisites. On macOS, follow the desktop quick start;
 on another OS, use the browser preview and report that verification scope.
-Run the existing setup script and keep credentials in voice/.env.local.
+Run the existing setup script. Follow the README CLI flow to bind an Agora
+project and write its credentials to voice/.env.local using
+agora project env write with --template nextjs. Keep credentials local.
 Start with local rice and foxtail interactions. Confirm the UI loads and
 check both catching and missing the grass if browser controls are available.
 For voice chat, use my chosen STT/LLM/TTS configuration. Consult the Voice
 setup section and invite-agent route before changing providers. Ask me to
-enter missing keys locally, and report any unavailable provider access.
+enter missing third-party provider keys locally, and report any unavailable provider access.
 After code changes, run the documented checks. Report which startup, UI,
 and real-call checks passed and which still need manual verification.
 ```
