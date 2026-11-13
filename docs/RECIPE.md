@@ -18,10 +18,22 @@ A transparent floating macOS companion with local pointer interactions and real-
 
 1. Follow the root README setup and run scripts.
 2. Without keys, verify rice, frenzy and foxtail catch/miss.
-3. Set the voice credentials in `voice/.env.local`.
+3. Follow [Configure Agora with the CLI](../README.md#configure-agora-with-the-cli) to select or create a project, enable Conversational AI and write Agora credentials to `voice/.env.local`. Add optional third-party provider keys locally. Rebuild and reopen the app after configuration changes.
 4. Start a call, allow the microphone and verify both speaking and listening.
 5. Test headphones, mute/unmute, interruption, ending and restarting a call.
 6. Retain the upstream licenses and asset notices when copying the project.
+
+## Agora environment configuration
+
+After CLI login and project selection, run this command from the repository root, replacing `YOUR_PROJECT_ID_OR_NAME` with the chosen project's ID or exact name:
+
+```bash
+agora project env write voice/.env.local --template nextjs --project "YOUR_PROJECT_ID_OR_NAME"
+```
+
+The CLI manages `NEXT_PUBLIC_AGORA_APP_ID` and `NEXT_AGORA_APP_CERTIFICATE` and records the project binding in `.agora/project.json`. Its default update preserves DeepSeek and Fish Audio keys; do not use `--overwrite`. Keep credentials and the local binding out of Git. See the README for CLI installation, login and project readiness checks.
+
+The CLI configures Agora credentials. The existing run script starts the desktop app, and **Start Chat** starts a voice session through the SDK.
 
 ## Customization map
 
@@ -30,7 +42,7 @@ A transparent floating macOS companion with local pointer interactions and real-
 | Character art | `voice/public/whale.png` |
 | Rice, kicking, foxtail | `voice/components/Pet.tsx`, `voice/app/globals.css` |
 | Name and visible text | `Whale.swift`, `Pet.tsx`, `LandingPage.tsx`, `ConversationComponent.tsx` |
-| Personality and language | `voice/app/api/invite-agent/route.ts` |
+| Personality and language | `PET_SYSTEM_PROMPT` and greeting in `voice/app/api/invite-agent/route.ts` |
 | STT/LLM/TTS configuration | `voice/app/api/invite-agent/route.ts` |
 | Native PCM playback | `Whale.swift`, `voice/components/ConversationComponent.tsx` |
 

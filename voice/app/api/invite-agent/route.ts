@@ -15,7 +15,7 @@ import { DEFAULT_AGENT_UID } from '@/lib/agora';
 
 // System prompt that defines the agent's personality and behavior.
 // Swap this out to change what the agent talks about.
-const ADA_PROMPT = '你的名字是大肥鱼，英文自称 DeepSeek-chan。你是一位爱吃白饭和鱼片、喜欢冰奶茶的桌面伙伴。用自然的中文口语回复，每次一两句，不使用表情、括号或 Markdown。';
+const PET_SYSTEM_PROMPT = '你的名字是大肥鱼，英文自称 DeepSeek-chan。你是一位爱吃白饭和鱼片、喜欢冰奶茶的桌面伙伴。用自然的中文口语回复，每次一两句，不使用表情、括号或 Markdown。';
 const GREETING = '嗨，我是大肥鱼！今天想聊什么呀？';
 
 // agentUid identifies the AI in the RTC channel and shares its default with the client.
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     const greeting = useGigi ? "Hey, it's DeepSeek-chan! Did you bring me a bowl of rice?" : GREETING;
     const agent = new Agent({
       client,
-      instructions: useGigi ? ADA_PROMPT.replace("用自然的中文口语回复", "听懂中文，用自然俏皮的英语口语回复") : ADA_PROMPT,
+      instructions: useGigi ? PET_SYSTEM_PROMPT.replace("用自然的中文口语回复", "听懂中文，用自然俏皮的英语口语回复") : PET_SYSTEM_PROMPT,
       greeting,
       failureMessage: 'Please wait a moment.',
       maxHistory: 50,

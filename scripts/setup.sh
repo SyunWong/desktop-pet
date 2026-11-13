@@ -10,5 +10,6 @@ if [ ! -f .env.local ]; then
   cp env.local.example .env.local
   chmod 600 .env.local
 fi
-echo "Ready. Optional voice credentials go in voice/.env.local."
+echo "Ready. For voice chat, follow the README Agora CLI login and project setup steps."
+echo 'From the repository root: agora project env write voice/.env.local --template nextjs --project "YOUR_PROJECT_ID_OR_NAME"'
 echo "On macOS, run ./scripts/run-macos.sh from the project root."

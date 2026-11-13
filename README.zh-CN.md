@@ -57,9 +57,49 @@ Setup 安装锁定版本的依赖，并在缺少配置文件时创建 `voice/.en
 
 下面的 STT、LLM 和 TTS 是作者录制 demo 时的个人选择。开发者可以选择自己的 Agora 集成支持的其他服务商，并按需求调整识别语言、模型和音色。
 
-如果要复现当前 demo，用编辑器打开 setup 生成的 `voice/.env.local`，按每行 `NAME=value` 填写自己的配置并保存在本地。Agora App ID 和对应 App Certificate 在 Agora Console 的项目中获取；DeepSeek 和 Fish Audio 的可选密钥分别来自你自己的服务商账号。
+### 通过 Agora CLI 配置项目
 
-- `NEXT_PUBLIC_AGORA_APP_ID` 和 `NEXT_AGORA_APP_CERTIFICATE` 来自同一个 Agora 项目，项目需开通 Conversational AI。
+运行 setup 后，使用 [Agora CLI](https://github.com/AgoraIO/cli) 选择项目并写入凭据，无需从 Console 手动复制 App ID 或 App Certificate。本仓库属于自定义应用，使用 `agora project env write` 指定 Next.js 变量名和文件路径。
+
+尚未安装 CLI 时，在 macOS/Linux 上运行：
+
+```bash
+curl -fsSL https://dl.agora.io/cli/install.sh | sh
+```
+
+检查安装状态，再登录本例 `Area.US` 配置对应的国际站：
+
+```bash
+agora version
+agora doctor --json
+agora login --region global
+agora project list --refresh-cache
+```
+
+以下命令已核对 CLI 0.2.9 的命令帮助。如果当前版本不支持 `project env write --template`，请先按官方安装说明更新 CLI。
+
+从列表中选择已有项目；如果需要新项目，先通过 CLI 创建：
+
+```bash
+agora project create desktop-pet --feature rtc --feature convoai
+```
+
+在**仓库根目录**执行以下命令，将 `YOUR_PROJECT_ID_OR_NAME` 替换为所选项目的 ID 或完整名称：
+
+```bash
+agora project use "YOUR_PROJECT_ID_OR_NAME"
+agora project feature enable convoai "YOUR_PROJECT_ID_OR_NAME"
+agora project env write voice/.env.local --template nextjs --project "YOUR_PROJECT_ID_OR_NAME"
+agora project doctor --feature convoai
+```
+
+显式传入 `--project`，可以避免仓库已有的本地绑定指向其他项目。CLI 将两项 Agora 凭据写入 `voice/.env.local`，并在 `.agora/project.json` 记录项目绑定。两份文件仅保留在本地。切换项目或刷新凭据时，再执行同一条 env-write 命令。不要加 `--overwrite`，默认更新会保留其他配置，包括已有服务商密钥。
+
+### 可选服务商密钥
+
+如需复现 DeepSeek 和 Fish Audio demo，用编辑器打开 `voice/.env.local`，按每行 `NAME=value` 填入这两个服务商的密钥。Agora 凭据由 CLI 管理。
+
+- `NEXT_PUBLIC_AGORA_APP_ID` 和 `NEXT_AGORA_APP_CERTIFICATE` 由 CLI 从同一个 Agora 项目写入，项目需开通 Conversational AI。
 - `DEEPSEEK_API_KEY` 用于 DeepSeek。
 - `FISH_AUDIO_API_KEY` 用于 Fish Audio。填好两个可选 key 可复现英文语音版本。
 - 不填可选 key 时，代码回退到 Agora 托管的 OpenAI / MiniMax，使用中文开场白。
@@ -82,7 +122,7 @@ Doctor 检查本地环境和两项 Agora 变量是否已填写。密钥有效性
 | 对话模型 LLM | DeepSeek `deepseek-flash`，关闭 thinking | 服务商、模型、提示词、生成参数 |
 | 语音合成 TTS | Fish Audio `s2-pro`，示例音色 | 服务商、语音模型、音色、输出语言 |
 
-在 `voice/app/api/invite-agent/route.ts` 的 `.withStt(...)`、`.withLlm(...)` 和 `.withTts(...)` 中修改对应配置。更换服务商时，需要同步修改 SDK provider 配置和服务端环境变量；同一服务商内换模型或音色，可调整对应参数。具体可用范围以你的账号及 SDK 版本支持情况为准。
+`voice/app/api/invite-agent/route.ts` 中的 `PET_SYSTEM_PROMPT` 定义桌宠性格，它是普通应用变量，不是 SDK 特殊名称。在该文件的 `.withStt(...)`、`.withLlm(...)` 和 `.withTts(...)` 中修改对应配置。更换服务商时，需要同步修改 SDK provider 配置和服务端环境变量；同一服务商内换模型或音色，可调整对应参数。具体可用范围以你的账号及 SDK 版本支持情况为准。
 
 当前代码会在存在 Fish Audio key 时启用英文提示词和开场白。换成其他语音服务商或语言时，也请在同一文件中调整提示词和开场白。
 
@@ -106,10 +146,11 @@ pnpm dev --hostname 127.0.0.1
 先读 README.zh-CN.md、scripts/setup.sh 和 scripts/run-macos.sh。
 检查系统和依赖。macOS 按桌面安装步骤运行；其他系统先用浏览器预览，
 并说明实际验证的平台和范围。使用项目现有 setup 脚本，密钥保存在
-voice/.env.local 中。先验证喂饭、炫饭和玩草；能操作浏览器时，
+voice/.env.local 中。按 README 的 CLI 流程绑定 Agora 项目，使用
+agora project env write 和 --template nextjs 写入 Agora 凭据。先验证喂饭、炫饭和玩草；能操作浏览器时，
 检查狗尾巴草的抓住和扑空两种结果。
 语音部分按我选择的 STT、LLM、TTS 配置。换服务商前阅读语音配置说明
-及 invite-agent 路由。缺少密钥时让我在本地填写，服务商不可用时如实说明。
+及 invite-agent 路由。缺少第三方服务商密钥时让我在本地填写，服务商不可用时如实说明。
 改代码后运行文档中的检查。最后列出已验证的启动、互动、真实通话结果，
 以及还需要我手动确认的部分。
 ```
